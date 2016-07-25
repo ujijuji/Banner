@@ -4,10 +4,13 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +20,7 @@ import example.banner.R;
 import example.test.adapter.BannerAdapter;
 import example.test.listener.BannerAdapterListener;
 import example.test.listener.MyViewpagerListener;
+import example.test.util.ScreenUtil;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -30,7 +34,7 @@ import rx.subscriptions.CompositeSubscription;
 public class BannerView<T> extends FrameLayout {
     private Context context;
     private MyViewPager viewPager;
-    private LinearLayout indicator;
+    private RelativeLayout indicator;
     private BannerAdapter adapter;
     private BannerAdapterListener adapterListener;
     private int time = 2;
@@ -40,6 +44,8 @@ public class BannerView<T> extends FrameLayout {
     private List<CircleView> circle = new ArrayList<>();
     private int color_in;
     private int color_out;
+    private List<String> desc = new ArrayList<>();
+    private TextView tv_desc;
 
     public enum IndicatorType {
         CIRCLE, CUBE
@@ -70,7 +76,7 @@ public class BannerView<T> extends FrameLayout {
         super.onFinishInflate();
         View view = LayoutInflater.from(context).inflate(R.layout.banner_layout, null);
         viewPager = (MyViewPager) view.findViewById(R.id.view_pager);
-        indicator = (LinearLayout) view.findViewById(R.id.indicator);
+        indicator = (RelativeLayout) view.findViewById(R.id.indicator);
         addView(view);
     }
 
@@ -91,12 +97,47 @@ public class BannerView<T> extends FrameLayout {
         color_in = current;
         color_out = other;
         for (int i = 0; i < mData.size(); i++) {
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
             CircleView view = new CircleView(context, current, other);
-            indicator.addView(view, params);
+            view.setId(i);
             circle.add(view);
         }
+        for (int i = mData.size() - 1; i >= 0; i--) {
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT);
+            CircleView view = circle.get(i);
+            if (i == mData.size() - 1) {
+                params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            } else {
+                params.addRule(RelativeLayout.LEFT_OF, circle.get(i + 1).getId());
+            }
+            params.addRule(RelativeLayout.CENTER_VERTICAL);
+            params.setMargins(0, 0, 15, 0);
+            indicator.addView(view, params);
+        }
+        return this;
+    }
+
+    public BannerView setTextDescription(List<String> list) {
+        if (mData == null) {
+            throw new AssertionError("check if invoked setImgData before.");
+        }
+        if (list.size() != mData.size()) {
+            throw new IllegalArgumentException("check if the list size is correct");
+        }
+        if (desc == null) {
+            desc = new ArrayList<>();
+        }
+        for (String str : list) {
+            desc.add(str);
+        }
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        params.setMargins(20, 0, 0, 0);
+        tv_desc = new TextView(context);
+        tv_desc.setTextColor(Color.parseColor("#FFFFFF"));
+        tv_desc.setTextSize(13);
+        indicator.addView(tv_desc, params);
         return this;
     }
 
@@ -145,6 +186,12 @@ public class BannerView<T> extends FrameLayout {
         viewPager.setCurrentItem(index);
         viewPager.addOnPageChangeListener(pageChangeListener);
         viewPager.setMyViewPagerListener(viewpagerListener);
+        if (circle.size() > 0) {
+            circle.get(0).setColor(color_in);
+        }
+        if (desc.size() > 0) {
+            tv_desc.setText(desc.get(0));
+        }
         startLoop();
     }
 
@@ -168,7 +215,12 @@ public class BannerView<T> extends FrameLayout {
 
         @Override
         public void onPageSelected(int position) {
-            chargeIndicator(position);
+            if (circle.size() > 0) {
+                chargeIndicator(position);
+            }
+            if (desc.size() > 0) {
+                chargeText(position);
+            }
         }
 
         @Override
@@ -177,10 +229,14 @@ public class BannerView<T> extends FrameLayout {
         }
     };
 
+    private void chargeText(int position) {
+        tv_desc.setText(desc.get(position % circle.size()));
+    }
+
     private void chargeIndicator(int position) {
-        for (View view : circle) {
-            ((CircleView) view).setColor(color_out);
+        for (CircleView view : circle) {
+            view.setColor(color_out);
         }
-        ((CircleView) circle.get(position % circle.size())).setColor(color_in);
+        circle.get(position % circle.size()).setColor(color_in);
     }
 }

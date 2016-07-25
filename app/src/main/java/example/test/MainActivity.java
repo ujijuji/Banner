@@ -20,8 +20,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         bannerView = (BannerView) findViewById(R.id.banner_view);
         bannerView.setTime(2)
-                .setImgData(comeList())
-                .setIndicatorColor(Color.BLACK, Color.WHITE)
+                .setImgData(pictrueList())
+                .setIndicatorColor(Color.parseColor("#DAA520"), Color.parseColor("#ffffff"))
+                .setTextDescription(descList())
                 .setClickListener(new BannerAdapterListener() {
                     @Override
                     public void onClickLoop(int index) {
@@ -31,12 +32,21 @@ public class MainActivity extends AppCompatActivity {
                 .start();
     }
 
-    public List<Integer> comeList(){
+    public List<Integer> pictrueList(){
         List<Integer> list = new ArrayList<>();
         list.add(R.mipmap.pic_1);
         list.add(R.mipmap.pic_2);
         list.add(R.mipmap.pic_3);
         list.add(R.mipmap.pic_4);
+        return list;
+    }
+
+    public List<String> descList(){
+        List<String> list = new ArrayList<>();
+        list.add(getString(R.string.desc_1));
+        list.add(getString(R.string.desc_2));
+        list.add(getString(R.string.desc_3));
+        list.add(getString(R.string.desc_4));
         return list;
     }
 

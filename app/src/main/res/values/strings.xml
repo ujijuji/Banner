@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Banner_Demo</string>
+    <string name="desc_1">窗前明月光,疑是地上霜</string>
+    <string name="desc_2">举头望明月,低头思故乡</string>
+    <string name="desc_3">两个黄鹂鸣翠柳，一行白鹭上青天</string>
+    <string name="desc_4">窗含西岭千秋雪，门泊东吴万里船</string>
 </resources>
