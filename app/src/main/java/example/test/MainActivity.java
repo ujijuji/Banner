@@ -19,7 +19,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         bannerView = (BannerView) findViewById(R.id.banner_view);
-        bannerView.setTime(2)
+        bannerView.setTime(3)
+                .setIndicatorType(BannerView.IndicatorType.CUBE)
                 .setImgData(pictrueList())
                 .setIndicatorColor(Color.parseColor("#DAA520"), Color.parseColor("#ffffff"))
                 .setTextDescription(descList())
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         list.add(R.mipmap.pic_2);
         list.add(R.mipmap.pic_3);
         list.add(R.mipmap.pic_4);
+        list.add(R.mipmap.pic_5);
         return list;
     }
 
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         list.add(getString(R.string.desc_2));
         list.add(getString(R.string.desc_3));
         list.add(getString(R.string.desc_4));
+        list.add(getString(R.string.desc_5));
         return list;
     }
 

@@ -9,19 +9,21 @@ import android.view.View;
 /**
  * Created by LiShang on 2016/7/22.
  */
-public class CircleView extends View {
+public class ShapeView extends View {
     private int selected_color = Color.parseColor("#ffffff");
     private int unselected_color = Color.parseColor("#80500000");
     private Paint mPaint;
+    private BannerView.IndicatorType mType = BannerView.IndicatorType.CIRCLE;
 
-    public CircleView(Context context, int incolor, int outcolor) {
+    public ShapeView(Context context, int incolor, int outcolor, BannerView.IndicatorType type) {
         super(context);
-        init(incolor, outcolor);
+        init(incolor, outcolor, type);
     }
 
-    private void init(int incolor, int outcolor) {
+    private void init(int incolor, int outcolor, BannerView.IndicatorType type) {
         selected_color = incolor;
         unselected_color = outcolor;
+        mType = type;
         mPaint = new Paint();
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(unselected_color);
@@ -31,7 +33,11 @@ public class CircleView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         mPaint.setAntiAlias(true);
-        canvas.drawCircle(getWidth() / 2, getHeight() / 2, getWidth() / 2, mPaint);
+        if(mType == BannerView.IndicatorType.CIRCLE){
+            canvas.drawCircle(getWidth() / 2, getHeight() / 2, getWidth() / 2, mPaint);
+        }else if(mType == BannerView.IndicatorType.CUBE){
+            canvas.drawRect(0, 0, getWidth(), getHeight(), mPaint);
+        }
     }
 
     @Override
