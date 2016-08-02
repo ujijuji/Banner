@@ -3,13 +3,19 @@ package example.test.view;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.IntRange;
+import android.support.annotation.Size;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,18 +43,15 @@ public class BannerView<T> extends FrameLayout {
     private BannerAdapterListener adapterListener;
     private int time;
     private List<T> mData;
+    private List<View> viewList;
     private CompositeSubscription subscription;
     private Subscription mLoop;
     private List<ShapeView> shapeList;
     private int color_in;
     private int color_out;
-    private List<String> desc;
+    private List<String> descList;
     private TextView tv_desc;
     private IndicatorType type = IndicatorType.CIRCLE;
-
-    public enum IndicatorType {
-        CIRCLE, CUBE
-    }
 
     public BannerView(Context context) {
         this(context, null);
@@ -69,8 +72,10 @@ public class BannerView<T> extends FrameLayout {
     private void init() {
         subscription = new CompositeSubscription();
         shapeList = new ArrayList<>();
-        desc = new ArrayList<>();
+        descList = new ArrayList<>();
         time = 3;
+        color_in = Color.parseColor("#ffffff");
+        color_out = Color.parseColor("#000000");
     }
 
     @Override
@@ -87,13 +92,30 @@ public class BannerView<T> extends FrameLayout {
         return this;
     }
 
-    public BannerView setIndicatorType(IndicatorType type){
+    public BannerView setIndicatorType(IndicatorType type) {
         this.type = type;
         return this;
     }
 
     public BannerView setImgData(List<T> list) {
         this.mData = list;
+        viewList = new ArrayList<>();
+        T t = list.get(0);
+        for (int i = 0; i < list.size(); i++) {
+            View view = LayoutInflater.from(context).inflate(R.layout.page_item, null);
+            ImageView img = (ImageView) view.findViewById(R.id.item_img);
+            if (t.getClass() == Integer.class) {
+                img.setImageResource((Integer) list.get(i));
+            } else if (t.getClass() == String.class) {
+                Glide.with(context)
+                        .load((String) list.get(i))
+                        .placeholder(R.drawable.ic_image_loading)
+                        .error(R.drawable.ic_image_loadfail)
+                        .into(img);
+            }
+            viewList.add(view);
+        }
+        adapter = new BannerAdapter(viewList, context);
         return this;
     }
 
@@ -132,7 +154,7 @@ public class BannerView<T> extends FrameLayout {
             throw new IllegalArgumentException("check if the list size is correct");
         }
         for (String str : list) {
-            desc.add(str);
+            descList.add(str);
         }
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -181,7 +203,7 @@ public class BannerView<T> extends FrameLayout {
     }
 
     public void start() {
-        adapter = new BannerAdapter(mData, context);
+//        adapter = new BannerAdapter(mData, context);
         if (adapterListener != null) {
             adapter.setAdapterOnClickListener(adapterListener);
         }
@@ -193,8 +215,8 @@ public class BannerView<T> extends FrameLayout {
         if (shapeList.size() > 0) {
             shapeList.get(0).setColor(color_in);
         }
-        if (desc.size() > 0) {
-            tv_desc.setText(desc.get(0));
+        if (descList.size() > 0) {
+            tv_desc.setText(descList.get(0));
         }
         startLoop();
     }
@@ -222,7 +244,7 @@ public class BannerView<T> extends FrameLayout {
             if (shapeList.size() > 0) {
                 chargeIndicator(position);
             }
-            if (desc.size() > 0) {
+            if (descList.size() > 0) {
                 chargeText(position);
             }
         }
@@ -234,7 +256,7 @@ public class BannerView<T> extends FrameLayout {
     };
 
     private void chargeText(int position) {
-        tv_desc.setText(desc.get(position % shapeList.size()));
+        tv_desc.setText(descList.get(position % shapeList.size()));
     }
 
     private void chargeIndicator(int position) {

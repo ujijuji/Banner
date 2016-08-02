@@ -13,14 +13,14 @@ public class ShapeView extends View {
     private int selected_color = Color.parseColor("#ffffff");
     private int unselected_color = Color.parseColor("#80500000");
     private Paint mPaint;
-    private BannerView.IndicatorType mType = BannerView.IndicatorType.CIRCLE;
+    private IndicatorType mType = IndicatorType.CIRCLE;
 
-    public ShapeView(Context context, int incolor, int outcolor, BannerView.IndicatorType type) {
+    public ShapeView(Context context, int incolor, int outcolor, IndicatorType type) {
         super(context);
         init(incolor, outcolor, type);
     }
 
-    private void init(int incolor, int outcolor, BannerView.IndicatorType type) {
+    private void init(int incolor, int outcolor, IndicatorType type) {
         selected_color = incolor;
         unselected_color = outcolor;
         mType = type;
@@ -33,9 +33,9 @@ public class ShapeView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         mPaint.setAntiAlias(true);
-        if(mType == BannerView.IndicatorType.CIRCLE){
+        if(mType == IndicatorType.CIRCLE){
             canvas.drawCircle(getWidth() / 2, getHeight() / 2, getWidth() / 2, mPaint);
-        }else if(mType == BannerView.IndicatorType.CUBE){
+        }else if(mType == IndicatorType.CUBE){
             canvas.drawRect(0, 0, getWidth(), getHeight(), mPaint);
         }
     }

@@ -10,6 +10,7 @@ import java.util.List;
 
 import example.test.listener.BannerAdapterListener;
 import example.test.view.BannerView;
+import example.test.view.IndicatorType;
 
 public class MainActivity extends AppCompatActivity {
     private BannerView bannerView;
@@ -19,9 +20,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         bannerView = (BannerView) findViewById(R.id.banner_view);
-        bannerView.setTime(3)
-                .setIndicatorType(BannerView.IndicatorType.CUBE)
-                .setImgData(pictrueList())
+        bannerView.setTime(4)
+                .setIndicatorType(IndicatorType.CUBE)
+                .setImgData(urlList())
                 .setIndicatorColor(Color.parseColor("#DAA520"), Color.parseColor("#ffffff"))
                 .setTextDescription(descList())
                 .setClickListener(new BannerAdapterListener() {
@@ -33,7 +34,17 @@ public class MainActivity extends AppCompatActivity {
                 .start();
     }
 
-    public List<Integer> pictrueList(){
+    public List<String> urlList(){
+        List<String> list = new ArrayList<>();
+        list.add("http://tupian.qqjay.com/u/2013/1127/19_222949_14.jpg");
+        list.add("http://tupian.qqjay.com/u/2013/1127/19_222949_3.jpg");
+        list.add("http://tupian.qqjay.com/u/2013/1127/19_222949_4.jpg");
+        list.add("http://tupian.qqjay.com/u/2013/1127/19_222949_6.jpg");
+        list.add("http://tupian.qqjay.com/u/2013/1127/19_222949_10.jpg");
+        return list;
+    }
+
+    public List<Integer> pictureList(){
         List<Integer> list = new ArrayList<>();
         list.add(R.mipmap.pic_1);
         list.add(R.mipmap.pic_2);
